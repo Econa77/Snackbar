@@ -1,5 +1,7 @@
 import UIKit
 
+/// Customizing the Window to always show the View on all sides addresses the problem of modals appearing and the snack bar disappearing.
+/// ref: https://github.com/material-components/material-components-ios/blob/51aa24305cde2bd26b614a2b05f730fe71266e2e/components/OverlayWindow/src/MDCOverlayWindow.m
 public final class SnackbarOverlayWindow: UIWindow {
     // MARK: - Properties
     private lazy var containerView: SnackbarOverlayWindowContainerView = {
@@ -7,7 +9,7 @@ public final class SnackbarOverlayWindow: UIWindow {
         containerView.backgroundColor = .clear
         return containerView
     }()
-    private var snackbarOverlayView: UIView?
+    private var overlayViews = [Overlay]()
 
     // MARK: - Initialize
     public override init(frame: CGRect) {
@@ -39,36 +41,57 @@ public final class SnackbarOverlayWindow: UIWindow {
         updateOverlayHiddenState()
     }
 
-    // MARK: - Window
+    // MARK: - Window Positioning
     public override func didAddSubview(_ subview: UIView) {
         super.didAddSubview(subview)
         bringSubviewToFront(containerView)
     }
 
     // MARK: - Overlay
-    func activeOverlay(_ overlayView: UIView) {
+    func activeOverlay(_ overlayView: UIView, windowLevel: UIWindow.Level) {
         overlayView.removeFromSuperview()
 
-        containerView.addSubview(overlayView)
+        let insertionIndex = overlayViews.firstIndex(where: { windowLevel < $0.windowLevel }) ?? overlayViews.count
+        containerView.insertSubview(overlayView, at: insertionIndex)
         overlayView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([overlayView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
                                      overlayView.topAnchor.constraint(equalTo: containerView.topAnchor),
                                      overlayView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
                                      overlayView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)])
-        snackbarOverlayView = overlayView
+        overlayViews.insert(.init(view: overlayView, windowLevel: windowLevel), at: insertionIndex)
 
         updateOverlayHiddenState()
     }
 
     func deactiveOverlay(_ overlayView: UIView) {
-        guard overlayView == snackbarOverlayView else { return }
+        guard overlayViews.contains(where: { $0.view == overlayView }) else { return }
 
-        snackbarOverlayView = nil
+        // When the View is removed here, `noteOverlayRemoved()` will be called from `SnapbarOverlayWindowContainerView`.
+        overlayView.removeFromSuperview()
+    }
+
+    func noteOverlayRemoved(_ overlayView: UIView) {
+        guard overlayViews.contains(where: { $0.view == overlayView }) else { return }
+
+        overlayViews.removeAll(where: { $0.view == overlayView })
 
         updateOverlayHiddenState()
     }
 
     private func updateOverlayHiddenState() {
-        containerView.isHidden = (snackbarOverlayView == nil)
+        containerView.isHidden = overlayViews.isEmpty
+        updateAccessibilityIsModal()
+    }
+
+    private func updateAccessibilityIsModal() {
+        containerView.accessibilityViewIsModal = overlayViews.contains(where: { $0.view.accessibilityViewIsModal })
+    }
+}
+
+private extension SnackbarOverlayWindow {
+    struct Overlay {
+        // MARK: - Properties
+        let view: UIView
+        let windowLevel: UIWindow.Level
     }
 }
