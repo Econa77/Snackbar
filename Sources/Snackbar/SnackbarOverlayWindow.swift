@@ -80,11 +80,6 @@ public final class SnackbarOverlayWindow: UIWindow {
 
     private func updateOverlayHiddenState() {
         containerView.isHidden = overlayViews.isEmpty
-        updateAccessibilityIsModal()
-    }
-
-    private func updateAccessibilityIsModal() {
-        containerView.accessibilityViewIsModal = overlayViews.contains(where: { $0.view.accessibilityViewIsModal })
     }
 }
 
