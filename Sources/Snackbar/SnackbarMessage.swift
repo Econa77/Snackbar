@@ -3,23 +3,29 @@ import UIKit
 public struct SnackbarMessage {
     // MARK: - Properties
     public let messageAttributedString: NSAttributedString
-    public let backgroundColor: UIColor
-    public let shadow: SnackbarShadow
-    public let duration: Configuration.Duration
+    public let font: UIFont
+    public let textColor: UIColor
+    public let style: SnackbarStyle
+    public let duration: SnackbarDuration
     public let action: SnackbarAction?
 
     // MARK: - Initialize
-    init(message: String, font: UIFont = UIFont.systemFont(ofSize: 14), textColor: UIColor = .white, backgroundColor: UIColor = UIColor(white: 0.1961, alpha: 1), shadow: SnackbarShadow = .init(), duration: Configuration.Duration = .long, action: SnackbarAction? = nil) {
-        let messageAttributedString = NSAttributedString(string: message,
-                                                         attributes: [.font: font,
-                                                                      .foregroundColor: textColor])
-        self.init(messageAttributedString: messageAttributedString, backgroundColor: backgroundColor, shadow: shadow, duration: duration, action: action)
+    public init(message: String, font: UIFont = UIFont.systemFont(ofSize: 14), textColor: UIColor = .white, style: SnackbarStyle = .init(), duration: SnackbarDuration = .long, action: SnackbarAction? = nil) {
+        self.messageAttributedString = NSAttributedString(string: message,
+                                                          attributes: [.font: font,
+                                                                       .foregroundColor: textColor])
+        self.font = font
+        self.textColor = textColor
+        self.style = style
+        self.duration = duration
+        self.action = action
     }
 
-    init(messageAttributedString: NSAttributedString, backgroundColor: UIColor = UIColor(white: 0.1961, alpha: 1), shadow: SnackbarShadow = .init(), duration: Configuration.Duration = .long, action: SnackbarAction? = nil) {
+    public init(messageAttributedString: NSAttributedString, style: SnackbarStyle = .init(), duration: SnackbarDuration = .long, action: SnackbarAction? = nil) {
         self.messageAttributedString = messageAttributedString
-        self.backgroundColor = backgroundColor
-        self.shadow = shadow
+        self.font = .systemFont(ofSize: 14)
+        self.textColor = .white
+        self.style = style
         self.duration = duration
         self.action = action
     }

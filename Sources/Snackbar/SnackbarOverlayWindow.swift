@@ -9,7 +9,7 @@ public final class SnackbarOverlayWindow: UIWindow {
         containerView.backgroundColor = .clear
         return containerView
     }()
-    private var overlayViews = [Overlay]()
+    private(set) var overlayView: SnackbarOverlayView?
 
     // MARK: - Initialize
     public override init(frame: CGRect) {
@@ -48,45 +48,36 @@ public final class SnackbarOverlayWindow: UIWindow {
     }
 
     // MARK: - Overlay
-    func activeOverlay(_ overlayView: UIView, windowLevel: UIWindow.Level) {
+    func activeOverlay(_ overlayView: SnackbarOverlayView) {
         overlayView.removeFromSuperview()
 
-        let insertionIndex = overlayViews.firstIndex(where: { windowLevel < $0.windowLevel }) ?? overlayViews.count
-        containerView.insertSubview(overlayView, at: insertionIndex)
+        containerView.addSubview(overlayView)
         overlayView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([overlayView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
                                      overlayView.topAnchor.constraint(equalTo: containerView.topAnchor),
                                      overlayView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
                                      overlayView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)])
-        overlayViews.insert(.init(view: overlayView, windowLevel: windowLevel), at: insertionIndex)
+        self.overlayView = overlayView
 
         updateOverlayHiddenState()
     }
 
     func deactiveOverlay(_ overlayView: UIView) {
-        guard overlayViews.contains(where: { $0.view == overlayView }) else { return }
+        guard overlayView == self.overlayView else { return }
 
         // When the View is removed here, `noteOverlayRemoved()` will be called from `SnapbarOverlayWindowContainerView`.
         overlayView.removeFromSuperview()
     }
 
     func noteOverlayRemoved(_ overlayView: UIView) {
-        guard overlayViews.contains(where: { $0.view == overlayView }) else { return }
+        guard overlayView == self.overlayView else { return }
 
-        overlayViews.removeAll(where: { $0.view == overlayView })
+        self.overlayView = nil
 
         updateOverlayHiddenState()
     }
 
     private func updateOverlayHiddenState() {
-        containerView.isHidden = overlayViews.isEmpty
-    }
-}
-
-private extension SnackbarOverlayWindow {
-    struct Overlay {
-        // MARK: - Properties
-        let view: UIView
-        let windowLevel: UIWindow.Level
+        containerView.isHidden = (overlayView == nil)
     }
 }
