@@ -10,7 +10,7 @@ public struct SnackbarMessage {
     public let action: SnackbarAction?
 
     // MARK: - Initialize
-    public init(message: String, font: UIFont = UIFont.systemFont(ofSize: 14), textColor: UIColor = .white, style: SnackbarStyle = .init(), duration: SnackbarDuration = .long, action: SnackbarAction? = nil) {
+    public init(message: String, font: UIFont = .systemFont(ofSize: 14), textColor: UIColor = .white, style: SnackbarStyle = .init(), duration: SnackbarDuration = .long, action: SnackbarAction? = nil) {
         self.messageAttributedString = NSAttributedString(string: message,
                                                           attributes: [.font: font,
                                                                        .foregroundColor: textColor])

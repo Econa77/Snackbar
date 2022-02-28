@@ -10,7 +10,7 @@ public struct SnackbarStyle {
     public let shadowRadius: CGFloat
 
     // MARK: - Initialize
-    public init(backgroundColor: UIColor = UIColor(white: 0.1961, alpha: 1), cornerRadius: CGFloat = 4, shadowColor: UIColor = .clear, shadowOpacity: Float = 0, shadowOffset: CGSize = .init(width: 0, height: -3), shadowRadius: CGFloat = 3) {
+    public init(backgroundColor: UIColor = UIColor(white: 0.1961, alpha: 1), cornerRadius: CGFloat = 4, shadowColor: UIColor = .clear, shadowOpacity: Float = 0, shadowOffset: CGSize = .zero, shadowRadius: CGFloat = 0) {
         self.backgroundColor = backgroundColor
         self.cornerRadius = cornerRadius
         self.shadowColor = shadowColor
