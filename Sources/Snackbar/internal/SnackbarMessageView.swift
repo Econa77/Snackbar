@@ -32,7 +32,7 @@ final class SnackbarMessageView: UIView {
         // Mesagge
         let messageLabel = UILabel()
         messageLabel.attributedText = message.messageAttributedString
-        messageLabel.textColor = .white
+        messageLabel.textColor = message.textColor
         messageLabel.font = .systemFont(ofSize: 14)
         messageLabel.numberOfLines = 2
         messageLabel.isUserInteractionEnabled = false
