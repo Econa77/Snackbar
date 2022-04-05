@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
     s.homepage              = "https://github.com/Econa77/Snackbar"
     s.author                = { "Econa77" => "s.f.1992.ip@gmail.com" }
     s.source                = { :git => "https://github.com/Econa77/Snackbar.git", :tag => "v#{s.version}" }
-    s.ios.deployment_target = '12.0'
+    s.ios.deployment_target = '11.0'
     s.source_files          = 'Sources/Snackbar/**/*.swift'
     s.swift_version         = '5.0'
 end
