@@ -33,7 +33,7 @@ final class SnackbarMessageView: UIView {
         let messageLabel = UILabel()
         messageLabel.attributedText = message.messageAttributedString
         messageLabel.textColor = message.textColor
-        messageLabel.font = .systemFont(ofSize: 14)
+        messageLabel.font = message.font
         messageLabel.numberOfLines = 2
         messageLabel.isUserInteractionEnabled = false
         messageLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
