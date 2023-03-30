@@ -34,7 +34,7 @@ final class SnackbarMessageView: UIView {
         messageLabel.attributedText = message.messageAttributedString
         messageLabel.textColor = message.textColor
         messageLabel.font = message.font
-        messageLabel.numberOfLines = 2
+        messageLabel.numberOfLines = message.numberOfLines
         messageLabel.isUserInteractionEnabled = false
         messageLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         messageLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
