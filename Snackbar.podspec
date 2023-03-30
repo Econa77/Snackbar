@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name                  = "Snackbar"
-    s.version               = "0.0.3"
+    s.version               = "0.0.4"
     s.summary               = "iOS version of the Material Design Snackbar component"
     s.license               = { :type => 'MIT', :file => 'LICENSE' }
     s.homepage              = "https://github.com/Econa77/Snackbar"
