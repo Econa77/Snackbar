@@ -40,31 +40,59 @@ final class SnackbarMessageView: UIView {
         messageLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         // Layout
-        if let action = message.action {
+        if message.action != nil || message.isCloseButtonEnabled {
             addSubview(messageLabel)
-            NSLayoutConstraint.activate([messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                                         messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-                                         messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)])
-
-            let actionButton = UIButton(type: .system)
-            actionButton.setTitleColor(action.textColor, for: .normal)
-            actionButton.titleLabel?.font = action.font
-            actionButton.setAttributedTitle(action.titleAttributedString, for: .normal)
-            actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-            actionButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-            actionButton.translatesAutoresizingMaskIntoConstraints = false
-            actionButton.addTarget(self, action: #selector(self.handleButtonTapped), for: .touchUpInside)
-            addSubview(actionButton)
-            NSLayoutConstraint.activate([actionButton.topAnchor.constraint(equalTo: topAnchor),
-                                         actionButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-                                         actionButton.leadingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: 8),
-                                         actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)])
+            NSLayoutConstraint.activate(
+                [messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+                 messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+                 messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)]
+            )
+            // Buttons
+            let buttonStackView = UIStackView()
+            buttonStackView.axis = .horizontal
+            buttonStackView.alignment = .center
+            buttonStackView.spacing = 4
+            buttonStackView.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(buttonStackView)
+            NSLayoutConstraint.activate(
+                [buttonStackView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 4),
+                 buttonStackView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -4),
+                 buttonStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+                 buttonStackView.leadingAnchor.constraint(greaterThanOrEqualTo: messageLabel.trailingAnchor, constant: 4),
+                 buttonStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: (message.isCloseButtonEnabled) ? -4 : -8)]
+            )
+            if let action = message.action {
+                let actionButton = UIButton(type: .system)
+                actionButton.setTitleColor(action.textColor, for: .normal)
+                actionButton.titleLabel?.font = action.font
+                actionButton.setAttributedTitle(action.titleAttributedString, for: .normal)
+                actionButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 10, right: 12)
+                actionButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+                actionButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+                actionButton.translatesAutoresizingMaskIntoConstraints = false
+                actionButton.addTarget(self, action: #selector(self.handleButtonTapped), for: .touchUpInside)
+                buttonStackView.addArrangedSubview(actionButton)
+            }
+            if message.isCloseButtonEnabled {
+                let closeButton = UIButton(type: .system)
+                closeButton.tintColor = message.closeButtonTintColor
+                closeButton.setImage(UIImage(named: "ic_close", in: .current, compatibleWith: nil), for: .normal)
+                buttonStackView.translatesAutoresizingMaskIntoConstraints = false
+                closeButton.addTarget(self, action: #selector(self.handleCloseButtonTapped), for: .touchUpInside)
+                buttonStackView.addArrangedSubview(closeButton)
+                NSLayoutConstraint.activate(
+                    [closeButton.widthAnchor.constraint(equalToConstant: 40),
+                     closeButton.heightAnchor.constraint(equalToConstant: 40)]
+                )
+            }
         } else {
             addSubview(messageLabel)
-            NSLayoutConstraint.activate([messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                                         messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-                                         messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-                                         messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)])
+            NSLayoutConstraint.activate(
+                [messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+                 messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+                 messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+                 messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)]
+            )
         }
     }
 
@@ -79,6 +107,10 @@ final class SnackbarMessageView: UIView {
     }
 
     @objc private func handleBackgroundTapped() {
+        dismiss(with: nil, isUserInitiated: true)
+    }
+
+    @objc private func handleCloseButtonTapped() {
         dismiss(with: nil, isUserInitiated: true)
     }
 
